@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snag Calc</title>
+    <style>
+        :root {
+            --bg-color: #000;
+            --text-color: #fff;
+            --accent: #333;
+            --border: #666;
+            --green: #44FF44;
+        }
+        
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #app-container {
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .header-row { text-align: center; }
+        .new-order-btn { color: #ff4444; background: none; border: 1px solid #444; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 18px; }
+
+        .columns-wrapper {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label-box {
+            border: 2px solid var(--border);
+            padding: 8px;
+            text-align: center;
+            font-size: 22px;
+            border-radius: 10px;
+            font-family: 'Marker Felt', sans-serif;
+        }
+
+        /* +/- Adjuster Row */
+        .adjuster-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #111;
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .qty-val {
+            font-size: 28px;
+            font-weight: bold;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .small-btn {
+            background: #444;
+            padding: 10px;
+            flex: 1;
+            font-size: 20px;
+        }
+
+        /* Grid for 1,2,3,4 */
+        .pad {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: 1px solid #555;
+            padding: 15px 5px;
+            font-size: 22px;
+            border-radius: 8px;
+            touch-action: manipulation;
+        }
+
+        button:active { background: #555; }
+
+        .clear-btn { background: #222; color: #888; font-size: 16px; padding: 10px; }
+
+        .total-box {
+            border: 2px solid var(--green);
+            color: var(--green);
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            border-radius: 10px;
+            margin-top: auto;
+        }
+        #price { font-size: 32px; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <div class="header-row">
+            <button class="new-order-btn" onclick="newOrder()">New Order</button>
+        </div>
+
+        <div class="columns-wrapper">
+            <div class="column">
+                <div class="label-box">Snag</div>
+                
+                <div class="adjuster-row">
+                    <button class="small-btn" onclick="adjust('snag', -1)">-</button>
+                    <span class="qty-val" id="snag-qty">0</span>
+                    <button class="small-btn" onclick="adjust('snag', 1)">+</button>
+                </div>
+
+                <div class="pad">
+                    <button onclick="setQty('snag', 1)">1</button>
+                    <button onclick="setQty('snag', 2)">2</button>
+                    <button onclick="setQty('snag', 3)">3</button>
+                    <button onclick="setQty('snag', 4)">4</button>
+                </div>
+                <button class="clear-btn" onclick="clearQty('snag')">Clear</button>
+            </div>
+
+            <div class="column">
+                <div class="label-box">Drink</div>
+
+                <div class="adjuster-row">
+                    <button class="small-btn" onclick="adjust('drink', -1)">-</button>
+                    <span class="qty-val" id="drink-qty">0</span>
+                    <button class="small-btn" onclick="adjust('drink', 1)">+</button>
+                </div>
+
+                <div class="pad">
+                    <button onclick="setQty('drink', 1)">1</button>
+                    <button onclick="setQty('drink', 2)">2</button>
+                    <button onclick="setQty('drink', 3)">3</button>
+                    <button onclick="setQty('drink', 4)">4</button>
+                </div>
+                <button class="clear-btn" onclick="clearQty('drink')">Clear</button>
+            </div>
+        </div>
+
+        <div class="total-box">
+            <span id="summary">0 snag + 0 drink</span>
+            <strong>$<span id="price">0.00</span></strong>
+        </div>
+    </div>
+
+    <script>
+        const prices = { snag: 3.5, drink: 2.0 };
+        let qty = { snag: 0, drink: 0 };
+
+        function update() {
+            document.getElementById('snag-qty').innerText = qty.snag;
+            document.getElementById('drink-qty').innerText = qty.drink;
+            document.getElementById('summary').innerText = `${qty.snag} snag + ${qty.drink} drink`;
+            document.getElementById('price').innerText = (qty.snag * prices.snag + qty.drink * prices.drink).toFixed(2);
+        }
+
+        function setQty(item, val) { qty[item] = val; update(); }
+        function adjust(item, change) { 
+            qty[item] = Math.max(0, qty[item] + change); 
+            update(); 
+        }
+        function clearQty(item) { qty[item] = 0; update(); }
+        function newOrder() { qty.snag = 0; qty.drink = 0; update(); }
+    </script>
+</body>
+</html>

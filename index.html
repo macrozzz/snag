@@ -3,198 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Snag Calc</title>
-<style>
-    :root {
-        --bg-color: #000;
-        --text-color: #fff;
-        --accent: #333;
-        --border: #666;
-        --green: #44FF44;
-    }
-    
-    * { box-sizing: border-box; }
+    <title>Snag & Change Calc</title>
+    <style>
+        :root {
+            --bg-color: #000;
+            --text-color: #fff;
+            --accent: #333;
+            --border: #666;
+            --green: #44FF44;
+            --blue: #44AAFF;
+        }
+        
+        * { box-sizing: border-box; }
 
-    body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: sans-serif;
-        margin: 0;
-        padding: 10px;
-        /* Removed 100vh to prevent it from stretching too far */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: sans-serif;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    #app-container {
-        border: 2px solid var(--border);
-        border-radius: 15px;
-        padding: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        width: 100%;
-        max-width: 450px; /* Keeps it looking good on tablet/PC */
-    }
+        #app-container {
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+        }
 
-    .header-row { text-align: center; }
-    .new-order-btn { 
-        color: #ff4444; 
-        background: #1a1a1a; 
-        border: 1px solid #444; 
-        padding: 10px 20px; 
-        border-radius: 8px; 
-        font-weight: bold; 
-        font-size: 16px;
-        width: 100%; /* Makes it easier to hit */
-    }
+        .header-row { text-align: center; }
+        .new-order-btn { 
+            color: #ff4444; 
+            background: #1a1a1a; 
+            border: 1px solid #444; 
+            padding: 10px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            width: 100%; 
+        }
 
-    .columns-wrapper {
-        display: flex;
-        gap: 10px;
-    }
+        .columns-wrapper { display: flex; gap: 10px; }
+        .column { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 
-    .column {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
+        .label-box {
+            border: 2px solid var(--border);
+            padding: 8px;
+            text-align: center;
+            font-size: 20px;
+            border-radius: 10px;
+            font-family: 'Marker Felt', sans-serif;
+        }
 
-    .label-box {
-        border: 2px solid var(--border);
-        padding: 8px;
-        text-align: center;
-        font-size: 20px;
-        border-radius: 10px;
-        font-family: 'Marker Felt', sans-serif;
-    }
+        .adjuster-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            background: #111;
+            border-radius: 10px;
+            padding: 4px;
+        }
 
-    .adjuster-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        background: #111;
-        border-radius: 10px;
-        padding: 4px;
-    }
+        .qty-val { font-size: 24px; font-weight: bold; min-width: 30px; text-align: center; }
+        .small-btn { background: #444; padding: 8px; flex: 1; font-size: 18px; }
 
-    .qty-val {
-        font-size: 24px;
-        font-weight: bold;
-        min-width: 30px;
-        text-align: center;
-    }
+        .pad { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 
-    .small-btn {
-        background: #444;
-        padding: 8px;
-        flex: 1;
-        font-size: 18px;
-    }
+        button {
+            background: var(--accent);
+            color: white;
+            border: 1px solid #555;
+            padding: 12px 5px;
+            font-size: 20px;
+            border-radius: 8px;
+            touch-action: manipulation;
+        }
 
-    .pad {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-    }
+        button:active { background: #555; }
+        .clear-btn { background: #222; color: #888; font-size: 14px; padding: 8px; }
 
-    button {
-        background: var(--accent);
-        color: white;
-        border: 1px solid #555;
-        padding: 12px 5px;
-        font-size: 20px;
-        border-radius: 8px;
-        touch-action: manipulation;
-    }
+        /* Total Section */
+        .total-box {
+            border: 2px solid var(--green);
+            color: var(--green);
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        #price { font-size: 30px; display: block; font-weight: bold; }
 
-    button:active { background: #555; }
+        /* Till / Change System Section */
+        .till-section {
+            border: 2px solid var(--blue);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .till-label { color: var(--blue); font-size: 14px; text-transform: uppercase; font-weight: bold; }
+        
+        .cash-buttons { display: flex; gap: 5px; }
+        .cash-btn { background: #1a1a1a; border: 1px solid var(--blue); color: var(--blue); flex: 1; font-size: 18px; }
+        
+        .custom-cash-input {
+            background: #000;
+            border: 1px solid #444;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+            width: 100%;
+        }
 
-    .clear-btn { background: #222; color: #888; font-size: 14px; padding: 8px; }
-
-    /* Total Box - margin-top auto removed so it hugs the content */
-    .total-box {
-        border: 2px solid var(--green);
-        color: var(--green);
-        padding: 12px;
-        text-align: center;
-        font-size: 18px;
-        border-radius: 10px;
-    }
-    #price { font-size: 32px; display: block; margin-top: 5px; }
-</style>
+        .change-display {
+            background: #002244;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 22px;
+            color: #88CCFF;
+        }
+    </style>
 </head>
 <body>
-    <div id="app-container">
-        <div class="header-row">
-            <button class="new-order-btn" onclick="newOrder()">New Order</button>
-        </div>
 
-        <div class="columns-wrapper">
-            <div class="column">
-                <div class="label-box">Snag</div>
-                
-                <div class="adjuster-row">
-                    <button class="small-btn" onclick="adjust('snag', -1)">-</button>
-                    <span class="qty-val" id="snag-qty">0</span>
-                    <button class="small-btn" onclick="adjust('snag', 1)">+</button>
-                </div>
+<div id="app-container">
+    <div class="header-row">
+        <button class="new-order-btn" onclick="newOrder()">NEW ORDER / RESET CASH</button>
+    </div>
 
-                <div class="pad">
-                    <button onclick="setQty('snag', 1)">1</button>
-                    <button onclick="setQty('snag', 2)">2</button>
-                    <button onclick="setQty('snag', 3)">3</button>
-                    <button onclick="setQty('snag', 4)">4</button>
-                </div>
-                <button class="clear-btn" onclick="clearQty('snag')">Clear</button>
+    <div class="columns-wrapper">
+        <div class="column">
+            <div class="label-box">Snag</div>
+            <div class="adjuster-row">
+                <button class="small-btn" onclick="adjust('snag', -1)">-</button>
+                <span class="qty-val" id="snag-qty">0</span>
+                <button class="small-btn" onclick="adjust('snag', 1)">+</button>
             </div>
-
-            <div class="column">
-                <div class="label-box">Drink</div>
-
-                <div class="adjuster-row">
-                    <button class="small-btn" onclick="adjust('drink', -1)">-</button>
-                    <span class="qty-val" id="drink-qty">0</span>
-                    <button class="small-btn" onclick="adjust('drink', 1)">+</button>
-                </div>
-
-                <div class="pad">
-                    <button onclick="setQty('drink', 1)">1</button>
-                    <button onclick="setQty('drink', 2)">2</button>
-                    <button onclick="setQty('drink', 3)">3</button>
-                    <button onclick="setQty('drink', 4)">4</button>
-                </div>
-                <button class="clear-btn" onclick="clearQty('drink')">Clear</button>
+            <div class="pad">
+                <button onclick="setQty('snag', 1)">1</button>
+                <button onclick="setQty('snag', 2)">2</button>
+                <button onclick="setQty('snag', 3)">3</button>
+                <button onclick="setQty('snag', 4)">4</button>
             </div>
         </div>
 
-        <div class="total-box">
-            <span id="summary">0 snag + 0 drink</span>
-            <strong>$<span id="price">0.00</span></strong>
+        <div class="column">
+            <div class="label-box">Drink</div>
+            <div class="adjuster-row">
+                <button class="small-btn" onclick="adjust('drink', -1)">-</button>
+                <span class="qty-val" id="drink-qty">0</span>
+                <button class="small-btn" onclick="adjust('drink', 1)">+</button>
+            </div>
+            <div class="pad">
+                <button onclick="setQty('drink', 1)">1</button>
+                <button onclick="setQty('drink', 2)">2</button>
+                <button onclick="setQty('drink', 3)">3</button>
+                <button onclick="setQty('drink', 4)">4</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const prices = { snag: 3.5, drink: 2.0 };
-        let qty = { snag: 0, drink: 0 };
+    <div class="total-box">
+        <span id="summary">0 snag + 0 drink</span>
+        <span id="price">$0.00</span>
+    </div>
 
-        function update() {
-            document.getElementById('snag-qty').innerText = qty.snag;
-            document.getElementById('drink-qty').innerText = qty.drink;
-            document.getElementById('summary').innerText = `${qty.snag} snag + ${qty.drink} drink`;
-            document.getElementById('price').innerText = (qty.snag * prices.snag + qty.drink * prices.drink).toFixed(2);
-        }
+    <div class="till-section">
+        <div class="till-label">Cash Received</div>
+        <div class="cash-buttons">
+            <button class="cash-btn" onclick="addCash(5)">$5</button>
+            <button class="cash-btn" onclick="addCash(10)">$10</button>
+            <button class="cash-btn" onclick="addCash(20)">$20</button>
+        </div>
+        <input type="number" id="customCash" class="custom-cash-input" placeholder="Custom Amount" oninput="updateChange()">
+        
+        <div class="change-display">
+            Change: <strong id="change-amt">$0.00</strong>
+        </div>
+    </div>
+</div>
 
-        function setQty(item, val) { qty[item] = val; update(); }
-        function adjust(item, change) { 
-            qty[item] = Math.max(0, qty[item] + change); 
-            update(); 
+<script>
+    const prices = { snag: 3.5, drink: 2.0 };
+    let qty = { snag: 0, drink: 0 };
+    let cashReceived = 0;
+
+    function update() {
+        document.getElementById('snag-qty').innerText = qty.snag;
+        document.getElementById('drink-qty').innerText = qty.drink;
+        
+        const total = (qty.snag * prices.snag + qty.drink * prices.drink);
+        document.getElementById('summary').innerText = `${qty.snag} snag + ${qty.drink} drink`;
+        document.getElementById('price').innerText = `$${total.toFixed(2)}`;
+        
+        updateChange();
+    }
+
+    function addCash(amt) {
+        cashReceived += amt;
+        document.getElementById('customCash').value = cashReceived;
+        updateChange();
+    }
+
+   function updateChange() {
+        const total = (qty.snag * prices.snag + qty.drink * prices.drink);
+        const cash = parseFloat(document.getElementById('customCash').value) || 0;
+        const change = cash - total;
+        
+        const display = document.getElementById('change-amt');
+        
+        // Always show the math now
+        display.innerText = `$${change.toFixed(2)}`;
+
+        if (change < 0) {
+            // Highlight in red if they still owe you money
+            display.style.color = "#FF4444"; 
+        } else if (change > 0) {
+            // Highlight in green or white if change is due
+            display.style.color = "#44FF44";
+        } else {
+            // Neutral if it's exact change
+            display.style.color = "#FFFFFF";
         }
-        function clearQty(item) { qty[item] = 0; update(); }
-        function newOrder() { qty.snag = 0; qty.drink = 0; update(); }
-    </script>
+    }
+
+    function setQty(item, val) { qty[item] = val; update(); }
+    function adjust(item, change) { 
+        qty[item] = Math.max(0, qty[item] + change); 
+        update(); 
+    }
+    function newOrder() { 
+        qty.snag = 0; 
+        qty.drink = 0; 
+        cashReceived = 0;
+        document.getElementById('customCash').value = '';
+        update(); 
+    }
+</script>
+
 </body>
 </html>
